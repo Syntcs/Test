@@ -54,8 +54,6 @@
             border-radius: 50%;
             border: none;
             cursor: pointer;
-            background-color: transparent;
-            border: 1px solid #fff;
         }
 
         .close { background: #ff5f57; }
@@ -67,6 +65,7 @@
             color: #fff;
             height: 400px;
             overflow-y: hidden; /* Kein Scrollen im Terminal */
+            position: relative; /* Relative Positionierung */
         }
 
         .prompt::before {
@@ -93,7 +92,7 @@
 
         #clock {
             position: absolute;
-            right: 10px;
+            right: 20px;
             top: 10px;
             color: white;
             font-size: 14px; /* Optional: Schriftgröße reduzieren */
@@ -127,12 +126,19 @@
                 width: 90%; /* Noch breiter für kleinere Bildschirme */
             }
         }
+
+        .cursor {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: #28c940;
+        }
     </style>
 </head>
 <body>
     <div class="window" style="left: 10%; top: 10%; width: 80vw;">
         <div class="titlebar">
-            <div style="color: white;">syntcs.com</div> <!-- Schriftfarbe ändern -->
+            <div style="color: #28c940;">syntcs.com</div> <!-- Schriftfarbe ändern -->
             <div class="window-controls">
                 <button class="control-button close"></button>
                 <button class="control-button minimize"></button>
@@ -145,7 +151,9 @@
                 <li><a href="https://syntcs.github.io/a3fov" style="color: #28c940">Arma3 FOV Calculator</a></li>
                 <li>Weiteres Projekt (coming soon)</li>
             </ul>
-            <div class="prompt" style="color: #28c940;">&gt; <span class="blink">_</span></div> <!-- Blinkendes _ -->
+            <div class="cursor">
+                <span class="blink">_</span>
+            </div>
         </div>
     </div>
 
@@ -154,7 +162,7 @@
             <div class="taskbar-tab active-tab">Terminal</div>
             <div class="taskbar-tab">Start</div>
         </div>
-        <div style="color: white; position: absolute; right: 10px; top: 10px;" id="clock"></div>
+        <div style="color: white" id="clock"></div>
     </div>
 
     <script>
@@ -205,8 +213,7 @@
             const now = new Date();
             const hours = now.getHours().toString().padStart(2, '0');
             const minutes = now.getMinutes().toString().padStart(2, '0');
-            const seconds = now.getSeconds().toString().padStart(2, '0');
-            document.getElementById('clock').innerText = `${hours}:${minutes}:${seconds}`;
+            document.getElementById('clock').innerText = `${hours}:${minutes}`;
         }
 
         updateClock();
