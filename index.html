@@ -2,13 +2,15 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>syntcs.com Terminal</title>
     <style>
         body {
             margin: 0;
             height: 100vh;
-            background: url('https://wallpaperaccess.com/full/84248.png') center/cover;
+            background: url('https://wallpaperaccess.com/full/84248.png') center/cover no-repeat;
             font-family: 'SF Mono', monospace;
+            overflow: hidden; /* Kein Scrollen auf der gesamten Seite */
         }
 
         #taskbar {
@@ -62,7 +64,7 @@
             padding: 20px;
             color: #fff;
             height: 400px;
-            overflow-y: hidden; /* Kein Scrollen */
+            overflow-y: hidden; /* Kein Scrollen im Terminal */
         }
 
         .prompt::before {
@@ -86,10 +88,25 @@
         .active-tab {
             background: #444;
         }
+
+        /* Anpassung für iPad (ca. 768px bis 1024px) */
+        @media only screen and (max-width: 1024px) {
+            .window {
+                width: 80%; /* Relativ zur Bildschirmbreite */
+                margin: 20px auto; /* Zentrieren */
+            }
+        }
+
+        /* Optional: Anpassung für kleinere Bildschirme (Smartphones) */
+        @media only screen and (max-width: 768px) {
+            .window {
+                width: 90%; /* Noch breiter für kleinere Bildschirme */
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="window" style="left: 100px; top: 100px">
+    <div class="window" style="left: 10%; top: 10%; width: 80vw;">
         <div class="titlebar">
             <div>syntcs.com</div>
             <div class="window-controls">
