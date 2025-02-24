@@ -23,7 +23,6 @@
             align-items: center;
             padding: 0 20px;
             justify-content: space-between;
-            padding-right: 60px; /* Platz für die Uhrzeit lassen */
         }
 
         .window {
@@ -93,7 +92,7 @@
 
         #clock {
             position: absolute;
-            right: 10px; /* Rechtsrand etwas weiter nach innen */
+            right: 20px; /* Rechtsrand etwas weiter nach innen */
             top: 10px;
             color: white;
             font-size: 12px; /* Optional: Schriftgröße reduzieren */
@@ -163,7 +162,7 @@
             <div class="taskbar-tab active-tab">Terminal</div>
             <div class="taskbar-tab">Start</div>
         </div>
-        <div style="color: white" id="clock"></div>
+        <div id="clock"></div> <!-- Uhrzeit-Element -->
     </div>
 
     <script>
