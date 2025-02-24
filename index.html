@@ -54,6 +54,8 @@
             border-radius: 50%;
             border: none;
             cursor: pointer;
+            background-color: transparent;
+            border: 1px solid #fff;
         }
 
         .close { background: #ff5f57; }
@@ -91,7 +93,7 @@
 
         #clock {
             position: absolute;
-            right: 20px;
+            right: 10px;
             top: 10px;
             color: white;
             font-size: 14px; /* Optional: Schriftgröße reduzieren */
@@ -130,7 +132,7 @@
 <body>
     <div class="window" style="left: 10%; top: 10%; width: 80vw;">
         <div class="titlebar">
-            <div style="color: #28c940;">syntcs.com</div> <!-- Schriftfarbe ändern -->
+            <div style="color: white;">syntcs.com</div> <!-- Schriftfarbe ändern -->
             <div class="window-controls">
                 <button class="control-button close"></button>
                 <button class="control-button minimize"></button>
@@ -152,7 +154,7 @@
             <div class="taskbar-tab active-tab">Terminal</div>
             <div class="taskbar-tab">Start</div>
         </div>
-        <div style="color: white" id="clock"></div>
+        <div style="color: white; position: absolute; right: 10px; top: 10px;" id="clock"></div>
     </div>
 
     <script>
@@ -203,7 +205,8 @@
             const now = new Date();
             const hours = now.getHours().toString().padStart(2, '0');
             const minutes = now.getMinutes().toString().padStart(2, '0');
-            document.getElementById('clock').innerText = `${hours}:${minutes}`;
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            document.getElementById('clock').innerText = `${hours}:${minutes}:${seconds}`;
         }
 
         updateClock();
