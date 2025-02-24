@@ -2,126 +2,173 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Syntcs Terminal</title>
+    <title>syntcs.com Terminal</title>
     <style>
         body {
             margin: 0;
-            font-family: 'Courier New', monospace;
-            background-color: #2c3e50; /* Dunkelblauer Hintergrund */
-            color: #ecf0f1; /* Helle Schriftfarbe */
-        }
-
-        .desktop {
-            position: relative;
-            width: 100%;
             height: 100vh;
+            background: url('https://wallpaperaccess.com/full/84248.png') center/cover;
+            font-family: 'SF Mono', monospace;
         }
 
-        .terminal {
-            width: 400px;
-            height: 300px;
-            background-color: #34495e; /* Dunkleres Terminal-Fenster */
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            overflow: hidden;
-        }
-
-        .terminal-header {
-            background-color: #1abc9c; /* Header-Farbe */
+        #taskbar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+            background: rgba(0,0,0,0.8);
             display: flex;
             align-items: center;
+            padding: 0 20px;
+            justify-content: space-between;
+        }
+
+        .window {
+            position: absolute;
+            width: 600px;
+            background: #1a1a1a;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+
+        .titlebar {
             padding: 10px;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-        }
-
-        .buttons {
+            background: #333;
+            border-radius: 12px 12px 0 0;
+            cursor: move;
             display: flex;
-            margin-right: auto;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .button {
+        .window-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-button {
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            margin: 0 4px;
+            border: none;
             cursor: pointer;
         }
 
-        .close {
-            background-color: #e74c3c;
+        .close { background: #ff5f57; }
+        .minimize { background: #febc2e; }
+        .maximize { background: #28c940; }
+
+        .terminal-content {
+            padding: 20px;
+            color: #fff;
+            height: 400px;
+            overflow-y: hidden; /* Kein Scrollen */
         }
 
-        .minimize {
-            background-color: #f39c12;
+        .prompt::before {
+            content: "> ";
+            color: #28c940;
         }
 
-        .maximize {
-            background-color: #2ecc71;
+        .taskbar-tabs {
+            display: flex;
+            gap: 10px;
         }
 
-        .terminal-title {
-            color: #ffffff;
-            font-weight: bold;
+        .taskbar-tab {
+            padding: 5px 10px;
+            background: #333;
+            color: #fff;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
         }
 
-        .terminal-body {
-            padding: 10px;
-            height: calc(100% - 50px); /* Höhe abzüglich Header */
-            overflow-y: auto;
-        }
-
-        .output {
-            margin: 0;
-            white-space: pre; /* Beibehaltung von Leerzeichen */
+        .active-tab {
+            background: #444;
         }
     </style>
 </head>
 <body>
-    <div class="desktop">
-        <div class="terminal" id="terminal">
-            <div class="terminal-header">
-                <div class="buttons">
-                    <span class="button close"></span>
-                    <span class="button minimize"></span>
-                    <span class="button maximize"></span>
-                </div>
-                <div class="terminal-title">syntcs.com</div>
-            </div>
-            <div class="terminal-body">
-                <div class="output">> Projects</div>
-                <div class="output">- Arma3 FOV Calculator (syntcs.github.io/a3fov)</div>
-                <div class="output">- weiteres Projekt</div>
+    <div class="window" style="left: 100px; top: 100px">
+        <div class="titlebar">
+            <div>syntcs.com</div>
+            <div class="window-controls">
+                <button class="control-button close"></button>
+                <button class="control-button minimize"></button>
+                <button class="control-button maximize"></button>
             </div>
         </div>
-        <div class="taskbar"></div>
+        <div class="terminal-content">
+            <div class="prompt">Projects</div>
+            <ul>
+                <li><a href="https://syntcs.github.io/a3fov" style="color: #28c940">Arma3 FOV Calculator</a></li>
+                <li>Weiteres Projekt (coming soon)</li>
+            </ul>
+        </div>
     </div>
+
+    <div id="taskbar">
+        <div class="taskbar-tabs">
+            <div class="taskbar-tab active-tab">Terminal</div>
+            <div class="taskbar-tab">Start</div>
+        </div>
+        <div style="color: white" id="clock"></div>
+    </div>
+
     <script>
-        // Drag functionality for the terminal
-        const terminal = document.getElementById('terminal');
+        // Drag functionality
+        const titlebar = document.querySelector('.titlebar');
+        let isDragging = false;
+        let currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
 
-        terminal.addEventListener('mousedown', (e) => {
-            let offsetX = e.clientX - terminal.getBoundingClientRect().left;
-            let offsetY = e.clientY - terminal.getBoundingClientRect().top;
+        titlebar.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
 
-            const mouseMoveHandler = (e) => {
-                terminal.style.left = `${e.clientX - offsetX}px`;
-                terminal.style.top = `${e.clientY - offsetY}px`;
-            };
+        function dragStart(e) {
+            initialX = e.clientX - xOffset;
+            initialY = e.clientY - yOffset;
+            
+            if (e.target === titlebar) {
+                isDragging = true;
+            }
+        }
 
-            const mouseUpHandler = () => {
-                document.removeEventListener('mousemove', mouseMoveHandler);
-                document.removeEventListener('mouseup', mouseUpHandler);
-            };
+        function drag(e) {
+            if (isDragging) {
+                e.preventDefault();
+                currentX = e.clientX - initialX;
+                currentY = e.clientY - initialY;
+                
+                xOffset = currentX;
+                yOffset = currentY;
+                
+                setTranslate(currentX, currentY, titlebar.parentElement);
+            }
+        }
 
-            document.addEventListener('mousemove', mouseMoveHandler);
-            document.addEventListener('mouseup', mouseUpHandler);
-        });
+        function setTranslate(xPos, yPos, el) {
+            el.style.left = xPos + "px";
+            el.style.top = yPos + "px";
+        }
+
+        function dragEnd() {
+            initialX = currentX;
+            initialY = currentY;
+            isDragging = false;
+        }
+
+        // Uhrzeit aktualisieren
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            document.getElementById('clock').innerText = `${hours}:${minutes}:${seconds}`;
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
     </script>
 </body>
 </html>
