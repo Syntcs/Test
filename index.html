@@ -23,6 +23,7 @@
             align-items: center;
             padding: 0 20px;
             justify-content: space-between;
+            padding-right: 60px; /* Platz für die Uhrzeit lassen */
         }
 
         .window {
@@ -92,10 +93,10 @@
 
         #clock {
             position: absolute;
-            right: 20px;
+            right: 10px; /* Rechtsrand etwas weiter nach innen */
             top: 10px;
             color: white;
-            font-size: 14px; /* Optional: Schriftgröße reduzieren */
+            font-size: 12px; /* Optional: Schriftgröße reduzieren */
         }
 
         @keyframes blink {
@@ -213,7 +214,8 @@
             const now = new Date();
             const hours = now.getHours().toString().padStart(2, '0');
             const minutes = now.getMinutes().toString().padStart(2, '0');
-            document.getElementById('clock').innerText = `${hours}:${minutes}`;
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            document.getElementById('clock').innerText = `${hours}:${minutes}:${seconds}`;
         }
 
         updateClock();
