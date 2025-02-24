@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>syntcs.com Terminal</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: url('https://wallpaperaccess.com/full/84248.png') center/cover;
+            font-family: 'SF Mono', monospace;
+        }
+
+        #taskbar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .window {
+            position: absolute;
+            width: 600px;
+            background: #1a1a1a;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+
+        .titlebar {
+            padding: 10px;
+            background: #333;
+            border-radius: 12px 12px 0 0;
+            cursor: move;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+        }
+
+        .close { background: #ff5f57; }
+        .minimize { background: #febc2e; }
+        .maximize { background: #28c940; }
+
+        .terminal-content {
+            padding: 20px;
+            color: #fff;
+            height: 400px;
+            overflow-y: auto;
+        }
+
+        .prompt::before {
+            content: "> ";
+            color: #28c940;
+        }
+    </style>
+</head>
+<body>
+    <div class="window" style="left: 100px; top: 100px">
+        <div class="titlebar">
+            <div>syntcs.com</div>
+            <div class="window-controls">
+                <button class="control-button close"></button>
+                <button class="control-button minimize"></button>
+                <button class="control-button maximize"></button>
+            </div>
+        </div>
+        <div class="terminal-content">
+            <div class="prompt">Projects</div>
+            <ul>
+                <li><a href="https://syntcs.github.io/a3fov" style="color: #28c940">Arma3 FOV Calculator</a></li>
+                <li>Weiteres Projekt (coming soon)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="taskbar">
+        <button style="color: white">Start</button>
+    </div>
+
+    <script>
+        // Drag functionality
+        const titlebar = document.querySelector('.titlebar');
+        let isDragging = false;
+        let currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
+
+        titlebar.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
+
+        function dragStart(e) {
+            initialX = e.clientX - xOffset;
+            initialY = e.clientY - yOffset;
+            
+            if (e.target === titlebar) {
+                isDragging = true;
+            }
+        }
+
+        function drag(e) {
+            if (isDragging) {
+                e.preventDefault();
+                currentX = e.clientX - initialX;
+                currentY = e.clientY - initialY;
+                
+                xOffset = currentX;
+                yOffset = currentY;
+                
+                setTranslate(currentX, currentY, titlebar.parentElement);
+            }
+        }
+
+        function setTranslate(xPos, yPos, el) {
+            el.style.left = xPos + "px";
+            el.style.top = yPos + "px";
+        }
+
+        function dragEnd() {
+            initialX = currentX;
+            initialY = currentY;
+            isDragging = false;
+        }
+    </script>
+</body>
+</html>
