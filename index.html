@@ -89,11 +89,33 @@
             background: #444;
         }
 
+        #clock {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            color: white;
+            font-size: 14px; /* Optional: Schriftgröße reduzieren */
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+
         /* Anpassung für iPad (ca. 768px bis 1024px) */
         @media only screen and (max-width: 1024px) {
             .window {
                 width: 80%; /* Relativ zur Bildschirmbreite */
                 margin: 20px auto; /* Zentrieren */
+            }
+            .control-button {
+                width: 15px; /* Größe der Buttons anpassen */
+                height: 15px; /* Größe der Buttons anpassen */
             }
         }
 
@@ -108,7 +130,7 @@
 <body>
     <div class="window" style="left: 10%; top: 10%; width: 80vw;">
         <div class="titlebar">
-            <div>syntcs.com</div>
+            <div style="color: #28c940;">syntcs.com</div> <!-- Schriftfarbe ändern -->
             <div class="window-controls">
                 <button class="control-button close"></button>
                 <button class="control-button minimize"></button>
@@ -121,6 +143,7 @@
                 <li><a href="https://syntcs.github.io/a3fov" style="color: #28c940">Arma3 FOV Calculator</a></li>
                 <li>Weiteres Projekt (coming soon)</li>
             </ul>
+            <div class="prompt" style="color: #28c940;">&gt; <span class="blink">_</span></div> <!-- Blinkendes _ -->
         </div>
     </div>
 
@@ -180,8 +203,7 @@
             const now = new Date();
             const hours = now.getHours().toString().padStart(2, '0');
             const minutes = now.getMinutes().toString().padStart(2, '0');
-            const seconds = now.getSeconds().toString().padStart(2, '0');
-            document.getElementById('clock').innerText = `${hours}:${minutes}:${seconds}`;
+            document.getElementById('clock').innerText = `${hours}:${minutes}`;
         }
 
         updateClock();
